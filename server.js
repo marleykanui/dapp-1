@@ -20,4 +20,9 @@ app.post('/', async (req, res) => {
   res.send(result);
 });
 
+app.get('/get_total_amount', async (req, res) => {
+  let result = await get_total_amount();
+  res.send(result);
+});
+
 app.listen(3000, () => console.log('Server is running on port 3000'));
