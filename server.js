@@ -4,10 +4,18 @@ const bodyParser = require('body-parser');
 const { save_user_information } = require('./models/serverdb.js');
 const path = require('path');
 const publicPath = path.join(__dirname, './public');
+const paypal = require('paypal-rest-sdk');
 
 // Handle Parsing
 app.use(bodyParser.json());
 app.use(express.static(publicPath));
+
+// Paypal Config
+paypal.configure({
+  mode: 'sandbox', //sandbox or live
+  client_id: process.env.CLIENT,
+  client_secret: process.env.SECRET,
+});
 
 app.post('/post_info', async (req, res) => {
   let email = req.body.email;
