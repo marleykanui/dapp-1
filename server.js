@@ -13,8 +13,10 @@ app.use(express.static(publicPath));
 // Paypal Config
 paypal.configure({
   mode: 'sandbox', //sandbox or live
-  client_id: process.env.CLIENT,
-  client_secret: process.env.SECRET,
+  client_id:
+    'ASu0ZtbdzaFJfIRErP2iOSU92ZQv75XzfZqi7Kz7lQAjk5dOZsPB9a0QSqm4SmjtytSEHlx-eN78yhyx',
+  client_secret:
+    'EAK3fTmhXz_OLCqWzsypVKxc-oSada8odOWZeJO6sngtWml9ObE-KOVhmf7FCM8BxxyMEu2iLzJpjXcZ',
 });
 
 app.post('/post_info', async (req, res) => {
@@ -27,7 +29,11 @@ app.post('/post_info', async (req, res) => {
     return_info.message = 'The amount should be greater than 1';
     return res.send(return_info);
   }
-  let result = await save_user_information({ amount: amount, email: email });
+  let fee_amount = amount * 0.9;
+  let result = await save_user_information({
+    amount: fee_amount,
+    email: email,
+  });
 
   var create_payment_json = {
     intent: 'sale',
@@ -76,6 +82,31 @@ app.post('/post_info', async (req, res) => {
       }
     }
   });
+});
+
+app.get('/success', (req, res) => {
+  const payerId = req.query.PayerID;
+  const paymentId = req.query.paymentId;
+  let execute_payment_json = {
+    payer_id: payerId,
+    transactions: [
+      {
+        amount: {
+          currency: 'USD',
+          total: 100,
+        },
+      },
+    ],
+  };
+  paypal.payment.execute(paymentId, execute_payment_json, (err, payment) => {
+    if (err) {
+      console.log(err.response);
+      throw error;
+    } else {
+      console.log(payment);
+    }
+  });
+  res.redirect('http://localhost:3000');
 });
 
 app.get('/get_total_amount', async (req, res) => {
