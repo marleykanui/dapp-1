@@ -42,7 +42,22 @@ get_list_of_participants = (data) =>
     );
   });
 
+delete_users = (data) =>
+  new Promise((resolve, reject) => {
+    db.query(
+      'delete from lottery_information where ID > 0',
+      null,
+      (err, results, fields) => {
+        if (err) {
+          reject('Could not delete all users');
+        }
+        resolve('All users deleted');
+      }
+    );
+  });
+
 module.exports = {
   save_user_information,
   get_list_of_participants,
+  delete_users,
 };

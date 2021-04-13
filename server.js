@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const {
   save_user_information,
   get_list_of_participants,
+  delete_users,
 } = require('./models/serverdb.js');
 const path = require('path');
 const publicPath = path.join(__dirname, './public');
@@ -113,7 +114,7 @@ app.get('/success', async (req, res) => {
   });
   // Delete all users in DB
   if (req.session.winner_picked) {
-    let deleted = await delete_user();
+    let deleted = await delete_users();
   }
   req.session.winner_picked = false;
   res.redirect('http://localhost:3000');
