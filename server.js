@@ -41,7 +41,7 @@ app.post('/post_info', async (req, res) => {
     email: email,
   });
   req.session.paypal_amount = amount;
-  var create_payment_json = {
+  let create_payment_json = {
     intent: 'sale',
     payer: {
       payment_method: 'paypal',
@@ -83,7 +83,7 @@ app.post('/post_info', async (req, res) => {
       console.log(payment);
       for (let i = 0; i < payment.links.length; i++) {
         if (payment.links[i].rel === 'approval_url') {
-          return res.send(payment.links[i].href);
+          return res.redirect(payment.links[i].href);
         }
       }
     }
@@ -142,7 +142,7 @@ app.get('/pick_winner', async (req, res) => {
     email_array[Math.floor(Math.random() * email_array.length)];
   req.session.winner_picked = true;
   // Create Paypal Payment
-  var create_payment_json = {
+  let create_payment_json = {
     intent: 'sale',
     payer: {
       payment_method: 'paypal',
@@ -184,7 +184,7 @@ app.get('/pick_winner', async (req, res) => {
       console.log(payment);
       for (let i = 0; i < payment.links.length; i++) {
         if (payment.links[i].rel === 'approval_url') {
-          return res.send(payment.links[i].href);
+          return res.redirect(payment.links[i].href);
         }
       }
     }
