@@ -89,7 +89,7 @@ app.post('/post_info', async (req, res) => {
   });
 });
 
-app.get('/success', (req, res) => {
+app.get('/success', async (req, res) => {
   const payerId = req.query.PayerID;
   const paymentId = req.query.paymentId;
   let execute_payment_json = {
@@ -111,6 +111,11 @@ app.get('/success', (req, res) => {
       console.log(payment);
     }
   });
+  // Delete all users in DB
+  if (req.session.winner_picked) {
+    let deleted = await delete_user();
+  }
+  req.session.winner_picked = false;
   res.redirect('http://localhost:3000');
 });
 
@@ -132,9 +137,9 @@ app.get('/pick_winner', async (req, res) => {
   list_of_participants.forEach((element) => {
     email_array.push(element.email);
   });
-  let winner = email_array[Math.floor(Math.random() * email_array.length)];
-  console.log(winner);
-  return;
+  let winner_email =
+    email_array[Math.floor(Math.random() * email_array.length)];
+  req.session.winner_picked = true;
   // Create Paypal Payment
   var create_payment_json = {
     intent: 'sale',
@@ -163,7 +168,7 @@ app.get('/pick_winner', async (req, res) => {
           total: req.session.paypal_amount,
         },
         payee: {
-          email: 'winner_email',
+          email: winner_email,
         },
         description: 'Paying the winner of the lottery application',
       },
